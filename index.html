@@ -1,50 +1,59 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ShtorkyGangMusic</title>
-    <!-- Подключаем Telegram WebApp JS -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Music Player</title>
+    <link rel="stylesheet" href="style.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <style>
-        body { font-family: system-ui; padding: 20px; background: var(--tg-theme-bg-color); color: var(--tg-theme-text-color); }
-        input, button { width: 100%; padding: 10px; margin: 10px 0; border-radius: 8px; border: 1px solid var(--tg-theme-hint-color); background: var(--tg-theme-secondary-bg-color); color: var(--tg-theme-text-color); }
-        button { background: var(--tg-theme-button-color); color: var(--tg-theme-button-text-color); border: none; cursor: pointer; }
-    </style>
 </head>
 <body>
-    <h1>Привет, <span id="username"></span>!</h1>
-    <p>Это окно — ваше мини-приложение.</p>
-
-    <input type="text" id="userData" placeholder="Введите текст...">
-    <button onclick="sendData()">Отправить данные боту</button>
-    <button onclick="closeApp()">Закрыть</button>
-
-    <script>
-        // Инициализируем WebApp
-        let tg = window.Telegram.WebApp;
-        // Расширяем приложение на весь экран
-        tg.expand();
-        // Показываем имя пользователя
-        let user = tg.initDataUnsafe?.user;
-        if (user) {
-            document.getElementById('username').innerText = user.first_name;
-        }
-
-        function sendData() {
-            let input = document.getElementById('userData');
-            let data = input.value;
-            if (data) {
-                // Отправляем данные обратно боту
-                tg.sendData(JSON.stringify({text: data}));
-                tg.close(); // Закрываем приложение после отправки
-            } else {
-                alert('Введите текст!');
-            }
-        }
-
-        function closeApp() {
-            tg.close();
-        }
-    </script>
+    <div class="container">
+        <div class="player-card">
+            <div class="album-art" id="albumArt">
+                <img id="albumImage" src="https://via.placeholder.com/300/1a1a2e/4a4a6e?text=🎵" alt="Album art">
+            </div>
+            
+            <div class="song-info">
+                <h2 id="songTitle">Выберите трек</h2>
+                <p id="songArtist">Из плейлиста</p>
+            </div>
+            
+            <div class="progress-container">
+                <span id="currentTime">0:00</span>
+                <div class="progress-bar" id="progressBar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <span id="duration">0:00</span>
+            </div>
+            
+            <div class="controls">
+                <button class="ctrl-btn" id="prevBtn" title="Предыдущий">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
+                    </svg>
+                </button>
+                <button class="ctrl-btn play-pause" id="playPauseBtn" title="Play/Pause">
+                    <svg id="playIcon" width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M8 5v14l11-7z"/>
+                    </svg>
+                </button>
+                <button class="ctrl-btn" id="nextBtn" title="Следующий">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="playlist-section">
+                <h3>🎵 Плейлист</h3>
+                <ul id="playlist" class="playlist"></ul>
+            </div>
+            
+            <button id="closeBtn" class="close-btn">Закрыть плеер</button>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
 </body>
 </html>
