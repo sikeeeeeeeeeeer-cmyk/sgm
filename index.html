@@ -53,6 +53,66 @@
             <button id="closeBtn" class="close-btn">Закрыть плеер</button>
         </div>
     </div>
+    <!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Music Player</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="player-card">
+            <!-- Блок плеера (как был раньше) -->
+            <div class="album-art" id="albumArt">
+                <img id="albumImage" src="https://via.placeholder.com/300/1a1a2e/4a4a6e?text=🎵" alt="Album art">
+            </div>
+            
+            <div class="song-info">
+                <h2 id="songTitle">Выберите трек</h2>
+                <p id="songArtist">Из плейлиста</p>
+            </div>
+            
+            <div class="progress-container">
+                <span id="currentTime">0:00</span>
+                <div class="progress-bar" id="progressBar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <span id="duration">0:00</span>
+            </div>
+            
+            <div class="controls">
+                <button class="ctrl-btn" id="prevBtn">⏮</button>
+                <button class="ctrl-btn play-pause" id="playPauseBtn">▶</button>
+                <button class="ctrl-btn" id="nextBtn">⏭</button>
+            </div>
+            
+            <!-- НОВОЕ: Форма добавления трека -->
+            <div class="add-track-section">
+                <h3>➕ Добавить свой трек</h3>
+                <div class="add-track-form">
+                    <input type="text" id="trackUrl" placeholder="URL MP3 файла или ссылка на YouTube" class="input-field">
+                    <input type="text" id="trackTitle" placeholder="Название трека (опционально)" class="input-field">
+                    <input type="text" id="trackArtist" placeholder="Исполнитель (опционально)" class="input-field">
+                    <button id="addTrackBtn" class="add-btn">🎵 Добавить в плейлист</button>
+                </div>
+                <div id="addStatus" class="status-message"></div>
+            </div>
+            
+            <div class="playlist-section">
+                <h3>🎵 Мой плейлист</h3>
+                <ul id="playlist" class="playlist"></ul>
+            </div>
+            
+            <button id="closeBtn" class="close-btn">Закрыть плеер</button>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
     
     <script src="script.js"></script>
 </body>
