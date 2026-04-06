@@ -1,33 +1,10 @@
 // Инициализация Telegram WebApp
 const tg = window.Telegram.WebApp;
-tg.expand(); // Растягиваем на весь экран
+tg.expand();
 tg.ready();
 
-// --- Плейлист (можно будет добавлять через бота) ---
-let playlist = [
-    {
-        id: 1,
-        title: "Example Song 1",
-        artist: "Artist Name",
-        url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-        duration: 211
-    },
-    {
-        id: 2,
-        title: "Example Song 2",
-        artist: "Another Artist",
-        url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
-        duration: 198
-    },
-    {
-        id: 3,
-        title: "Example Song 3",
-        artist: "The Band",
-        url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
-        duration: 245
-    }
-];
-
+// Загружаем сохранённый плейлист из localStorage (или создаём новый)
+let playlist = loadPlaylist();
 let currentTrackIndex = 0;
 let audio = new Audio();
 let isPlaying = false;
@@ -46,29 +23,87 @@ const currentTimeEl = document.getElementById('currentTime');
 const durationEl = document.getElementById('duration');
 const closeBtn = document.getElementById('closeBtn');
 
-// --- Функции ---
-function loadTrack(index) {
-    const track = playlist[index];
-    if (!track) return;
-    
-    songTitle.textContent = track.title;
-    songArtist.textContent = track.artist;
-    audio.src = track.url;
-    
-    // Обновляем активный трек в плейлисте
-    document.querySelectorAll('.playlist li').forEach((li, i) => {
-        if (i === index) {
-            li.classList.add('active');
-        } else {
-            li.classList.remove('active');
-        }
-    });
-    
-    if (isPlaying) {
-        audio.play();
+// НОВЫЕ элементы
+const trackUrl = document.getElementById('trackUrl');
+const trackTitle = document.getElementById('trackTitle');
+const trackArtist = document.getElementById('trackArtist');
+const addTrackBtn = document.getElementById('addTrackBtn');
+const addStatus = document.getElementById('addStatus');
+
+// --- Функции для работы с плейлистом ---
+
+function loadPlaylist() {
+    const saved = localStorage.getItem('music_playlist');
+    if (saved) {
+        return JSON.parse(saved);
     }
+    // Плейлист по умолчанию (примеры)
+    return [
+        {
+            id: Date.now(),
+            title: "Example Song 1",
+            artist: "Artist Name",
+            url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+            duration: 211,
+            addedBy: "system"
+        },
+        {
+            id: Date.now() + 1,
+            title: "Example Song 2",
+            artist: "Another Artist",
+            url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+            duration: 198,
+            addedBy: "system"
+        }
+    ];
 }
 
+function savePlaylist() {
+    localStorage.setItem('music_playlist', JSON.stringify(playlist));
+}
+
+function addTrackToPlaylist(url, title, artist) {
+    // Валидация URL
+    if (!url || url.trim() === '') {
+        showStatus('❌ Введите URL трека', 'error');
+        return false;
+    }
+    
+    // Создаём новый трек
+    const newTrack = {
+        id: Date.now(),
+        url: url.trim(),
+        title: title.trim() || 'Без названия',
+        artist: artist.trim() || 'Неизвестный исполнитель',
+        duration: 0, // Будет определено при загрузке
+        addedBy: 'user',
+        addedAt: new Date().toISOString()
+    };
+    
+    playlist.push(newTrack);
+    savePlaylist();
+    renderPlaylist();
+    
+    showStatus('✅ Трек добавлен! Он появится в плейлисте.', 'success');
+    
+    // Очищаем поля
+    trackUrl.value = '';
+    trackTitle.value = '';
+    trackArtist.value = '';
+    
+    return true;
+}
+
+function showStatus(message, type) {
+    addStatus.textContent = message;
+    addStatus.className = `status-message ${type}`;
+    setTimeout(() => {
+        addStatus.textContent = '';
+        addStatus.className = 'status-message';
+    }, 3000);
+}
+
+// --- Функции плеера (остаются те же) ---
 function formatTime(seconds) {
     if (isNaN(seconds)) return '0:00';
     const mins = Math.floor(seconds / 60);
@@ -91,48 +126,132 @@ function setProgressBar(e) {
 function playPause() {
     if (isPlaying) {
         audio.pause();
-        const playIcon = document.querySelector('#playIcon');
-        playIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+        playPauseBtn.textContent = '▶';
     } else {
         audio.play();
-        const playIcon = document.querySelector('#playIcon');
-        playIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+        playPauseBtn.textContent = '⏸';
     }
     isPlaying = !isPlaying;
 }
 
 function nextTrack() {
+    if (playlist.length === 0) return;
     currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
     loadTrack(currentTrackIndex);
     if (isPlaying) audio.play();
 }
 
 function prevTrack() {
+    if (playlist.length === 0) return;
     currentTrackIndex = (currentTrackIndex - 1 + playlist.length) % playlist.length;
     loadTrack(currentTrackIndex);
     if (isPlaying) audio.play();
 }
 
+function loadTrack(index) {
+    const track = playlist[index];
+    if (!track) return;
+    
+    songTitle.textContent = track.title;
+    songArtist.textContent = track.artist;
+    
+    // Если у нас есть file_id от Telegram, используем его (быстрее)
+    if (track.file_id) {
+        audio.src = `telegram-file://${track.file_id}`; // Это не работает напрямую, нужен бот
+        // На самом деле file_id нужно использовать через бота
+    }
+    
+    audio.src = track.url;
+    
+    // Обновляем активный трек в плейлисте
+    document.querySelectorAll('.playlist li').forEach((li, i) => {
+        if (i === index) {
+            li.classList.add('active');
+        } else {
+            li.classList.remove('active');
+        }
+    });
+}
+
 function renderPlaylist() {
     playlistEl.innerHTML = '';
+    if (playlist.length === 0) {
+        playlistEl.innerHTML = '<li style="text-align:center; opacity:0.7;">Плейлист пуст. Добавьте треки!</li>';
+        return;
+    }
+    
     playlist.forEach((track, index) => {
         const li = document.createElement('li');
         li.innerHTML = `
-            <span class="track-name">${track.title}</span>
+            <span class="track-name">${escapeHtml(track.title)}</span>
+            <span class="track-artist">${escapeHtml(track.artist)}</span>
             <span class="track-duration">${formatTime(track.duration)}</span>
+            <button class="delete-track" data-id="${track.id}">🗑</button>
         `;
-        li.onclick = () => {
-            currentTrackIndex = index;
-            loadTrack(currentTrackIndex);
-            if (isPlaying) audio.play();
+        li.onclick = (e) => {
+            // Если кликнули не на кнопку удаления
+            if (!e.target.classList.contains('delete-track')) {
+                currentTrackIndex = index;
+                loadTrack(currentTrackIndex);
+                if (isPlaying) audio.play();
+            }
         };
         playlistEl.appendChild(li);
+    });
+    
+    // Добавляем обработчики удаления
+    document.querySelectorAll('.delete-track').forEach(btn => {
+        btn.onclick = (e) => {
+            e.stopPropagation();
+            const id = parseInt(btn.dataset.id);
+            deleteTrack(id);
+        };
+    });
+}
+
+function deleteTrack(id) {
+    const index = playlist.findIndex(t => t.id === id);
+    if (index !== -1) {
+        playlist.splice(index, 1);
+        savePlaylist();
+        renderPlaylist();
+        
+        // Корректируем текущий индекс
+        if (playlist.length === 0) {
+            currentTrackIndex = -1;
+            songTitle.textContent = 'Нет треков';
+            songArtist.textContent = 'Добавьте музыку';
+            audio.src = '';
+        } else if (currentTrackIndex >= playlist.length) {
+            currentTrackIndex = playlist.length - 1;
+            loadTrack(currentTrackIndex);
+        } else if (currentTrackIndex === index) {
+            loadTrack(currentTrackIndex);
+        }
+        
+        showStatus('🗑 Трек удалён из плейлиста', 'success');
+    }
+}
+
+function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, function(m) {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        return m;
     });
 }
 
 // --- Обработчики событий ---
 audio.addEventListener('loadedmetadata', () => {
     durationEl.textContent = formatTime(audio.duration);
+    // Обновляем длительность в плейлисте
+    if (playlist[currentTrackIndex]) {
+        playlist[currentTrackIndex].duration = Math.floor(audio.duration);
+        savePlaylist();
+        renderPlaylist();
+    }
 });
 
 audio.addEventListener('timeupdate', updateProgress);
@@ -144,12 +263,46 @@ nextBtn.addEventListener('click', nextTrack);
 prevBtn.addEventListener('click', prevTrack);
 closeBtn.addEventListener('click', () => tg.close());
 
-// --- Отправка данных боту (опционально) ---
-// Можно отправить информацию о том, что пользователь слушает
-function notifyBot(action, data) {
-    tg.sendData(JSON.stringify({ action, data }));
-}
+// НОВОЕ: Обработчик добавления трека
+addTrackBtn.addEventListener('click', () => {
+    const url = trackUrl.value.trim();
+    const title = trackTitle.value.trim();
+    const artist = trackArtist.value.trim();
+    
+    if (!url) {
+        showStatus('❌ Введите URL трека', 'error');
+        return;
+    }
+    
+    // Проверяем, не добавлен ли уже такой трек
+    const exists = playlist.some(t => t.url === url);
+    if (exists) {
+        showStatus('⚠️ Этот трек уже есть в плейлисте', 'error');
+        return;
+    }
+    
+    // Отправляем URL боту для получения информации
+    showStatus('⏳ Обработка трека...', 'loading');
+    
+    // Отправляем данные боту
+    tg.sendData(JSON.stringify({
+        action: 'add_track',
+        url: url,
+        title: title,
+        artist: artist
+    }));
+});
+
+// Обработка ответа от бота (через WebApp)
+// Данные от бота приходят через событие message
+tg.onEvent('mainButtonClicked', () => {});
+tg.onEvent('backButtonClicked', () => {});
 
 // --- Инициализация ---
 renderPlaylist();
-loadTrack(0);
+if (playlist.length > 0) {
+    loadTrack(0);
+} else {
+    songTitle.textContent = 'Плейлист пуст';
+    songArtist.textContent = 'Добавьте треки через форму выше';
+}
