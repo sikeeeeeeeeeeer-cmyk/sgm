@@ -179,3 +179,75 @@ body {
 .close-btn:hover {
     background: rgba(255, 255, 255, 0.2);
 }
+/* Добавьте в конец файла style.css */
+
+/* Секция добавления трека */
+.add-track-section {
+    margin-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 16px;
+}
+
+.add-track-section h3 {
+    font-size: 1rem;
+    margin-bottom: 12px;
+    color: var(--tg-theme-hint-color, #a0a0b0);
+}
+
+.add-track-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.input-field {
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    color: var(--tg-theme-text-color, #ffffff);
+    font-size: 0.9rem;
+}
+
+.input-field:focus {
+    outline: none;
+    border-color: var(--tg-theme-button-color, #6c5ce7);
+}
+
+.add-btn {
+    padding: 12px;
+    background: var(--tg-theme-button-color, #6c5ce7);
+    color: var(--tg-theme-button-text-color, #ffffff);
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.add-btn:hover {
+    opacity: 0.8;
+}
+
+.status-message {
+    font-size: 0.8rem;
+    padding: 8px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.status-message.success {
+    background: rgba(76, 175, 80, 0.2);
+    color: #4caf50;
+}
+
+.status-message.error {
+    background: rgba(244, 67, 54, 0.2);
+    color: #f44336;
+}
+
+.status-message.loading {
+    background: rgba(108, 92, 231, 0.2);
+    color: #6c5ce7;
+}
