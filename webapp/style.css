@@ -29,11 +29,16 @@ body {
     margin-bottom: 24px;
 }
 
-.album-art img {
-    width: 200px;
-    height: 200px;
-    border-radius: 20px;
-    object-fit: cover;
+.placeholder-art {
+    width: 150px;
+    height: 150px;
+    background: linear-gradient(135deg, #6c5ce7, #a363d9);
+    border-radius: 30px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 64px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
 }
 
@@ -94,6 +99,7 @@ body {
     border: none;
     color: var(--tg-theme-text-color, #ffffff);
     cursor: pointer;
+    font-size: 24px;
     padding: 8px;
     transition: transform 0.2s, opacity 0.2s;
 }
@@ -111,77 +117,13 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 28px;
 }
 
 .play-pause:hover {
     transform: scale(1.1);
 }
 
-.playlist-section {
-    margin-top: 16px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding-top: 16px;
-}
-
-.playlist-section h3 {
-    font-size: 1rem;
-    margin-bottom: 12px;
-    color: var(--tg-theme-hint-color, #a0a0b0);
-}
-
-.playlist {
-    list-style: none;
-    max-height: 200px;
-    overflow-y: auto;
-}
-
-.playlist li {
-    padding: 10px 12px;
-    margin: 4px 0;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: background 0.2s;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.playlist li:hover {
-    background: rgba(255, 255, 255, 0.1);
-}
-
-.playlist li.active {
-    background: var(--tg-theme-button-color, #6c5ce7);
-}
-
-.playlist li .track-name {
-    flex: 1;
-}
-
-.playlist li .track-duration {
-    font-size: 0.75rem;
-    color: var(--tg-theme-hint-color, #a0a0b0);
-}
-
-.close-btn {
-    width: 100%;
-    padding: 12px;
-    margin-top: 20px;
-    background: rgba(255, 255, 255, 0.1);
-    border: none;
-    border-radius: 12px;
-    color: var(--tg-theme-text-color, #ffffff);
-    cursor: pointer;
-    font-size: 1rem;
-    transition: background 0.2s;
-}
-
-.close-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
-}
-/* Добавьте в конец файла style.css */
-
-/* Секция добавления трека */
 .add-track-section {
     margin-top: 20px;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -250,4 +192,96 @@ body {
 .status-message.loading {
     background: rgba(108, 92, 231, 0.2);
     color: #6c5ce7;
+}
+
+.playlist-section {
+    margin-top: 16px;
+}
+
+.playlist-section h3 {
+    font-size: 1rem;
+    margin-bottom: 12px;
+    color: var(--tg-theme-hint-color, #a0a0b0);
+}
+
+.playlist {
+    list-style: none;
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.playlist li {
+    padding: 10px 12px;
+    margin: 4px 0;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.playlist li:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.playlist li.active {
+    background: var(--tg-theme-button-color, #6c5ce7);
+}
+
+.playlist li .track-name {
+    flex: 1;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.playlist li .track-artist {
+    font-size: 0.75rem;
+    color: var(--tg-theme-hint-color, #a0a0b0);
+    max-width: 80px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.playlist li .track-duration {
+    font-size: 0.7rem;
+    color: var(--tg-theme-hint-color, #a0a0b0);
+    min-width: 40px;
+    text-align: right;
+}
+
+.delete-track {
+    background: none;
+    border: none;
+    color: #ff6b6b;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 4px 8px;
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+
+.delete-track:hover {
+    background: rgba(255, 107, 107, 0.2);
+}
+
+.close-btn {
+    width: 100%;
+    padding: 12px;
+    margin-top: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 12px;
+    color: var(--tg-theme-text-color, #ffffff);
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.2s;
+}
+
+.close-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
 }
